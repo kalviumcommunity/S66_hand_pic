@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "license": "ISC",
   "type": "commonjs",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon src/server.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
