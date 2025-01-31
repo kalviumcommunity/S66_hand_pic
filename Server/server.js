@@ -6,15 +6,24 @@ require('dotenv').config();
 
 app.use(express.json());
 
+let dbConnectionStatus = 'Disconnected'; 
+
 mongoose.connect(process.env.mongoURI)
     .then(() => {
+        dbConnectionStatus = 'Connected';
         console.log("Successfully connected to MongoDB");
     })
     .catch((error) => {
         console.log(error);
+        dbConnectionStatus = `Error: ${error.message}`;
     });
 
-
+app.get('/',(req,res)=>{
+    res.json({
+        message: 'Welcome to the ASAP Project',
+        dbStatus: dbConnectionStatus,
+    });
+})
 
 app.get('/ping', (req, res) => {
     res.send('pong');
