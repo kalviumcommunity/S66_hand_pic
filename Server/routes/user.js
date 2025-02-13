@@ -23,7 +23,7 @@ userRouter.get('/users/:id', async (req, res) => {
 
 userRouter.post('/create/user', async(req,res)=>{
     const{username,password,email,age} = req.body;
-    payload={username,password};
+    payload={username,password,email,age};
     
     try {
         let new_user = new UserModel(payload);
