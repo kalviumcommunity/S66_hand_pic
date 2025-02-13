@@ -1,0 +1,20 @@
+meta {
+  name: PostReq1
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:7878/create/user
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username":"Abhinav123",
+    "password":"Abhi@2006",
+    "email":"Abhinav.v.s66@kalvium.community",
+    "age":"19"
+  }
+}
