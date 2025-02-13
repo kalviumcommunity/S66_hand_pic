@@ -1,6 +1,9 @@
 ## Render Link:
 https://s66-hand-pic.onrender.com/ping
 
+## Frontend-deploy Link:
+https://frontend-deploy.handypic.pages.dev
+
 # Project Title:  
 **Unique Hand Pictures**
 
