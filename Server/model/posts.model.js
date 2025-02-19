@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 
-const HandSchema = mongoose.Schema({
-    title:{
+const PostSchema = mongoose.Schema({
+    image:{
         type: String,
         required: true,
-    },
-    image:{
+    },title:{
         type: String,
         required: true,
     },
@@ -19,5 +18,6 @@ const HandSchema = mongoose.Schema({
     }
 });
 
-const HandModel = mongoose.model('HandDetail',HandSchema);
-module.exports = HandModel;
+const PostModel = mongoose.model('HandDetail',PostSchema);
+
+module.exports = PostModel;

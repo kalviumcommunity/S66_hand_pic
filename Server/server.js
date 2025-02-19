@@ -1,9 +1,15 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const { userRouter } = require('./routes/user')
-require('dotenv').config();
+const cors = require('cors');
+const userRouter = require('./routes/user')
+const postRouter = require('./routes/post')
+
 app.use(express.json());
+app.use(cors());
+app.use('/uploads', express.static('uploads'));
+
 
 let dbConnectionStatus = 'Disconnected'; 
 
@@ -24,7 +30,9 @@ app.get('/',(req,res)=>{
     });
 })
 
-app.use(userRouter);
+
+app.use('/',postRouter);
+app.use('/',userRouter);
 
 app.get('/ping', (req, res) => {
     res.send('pong');
