@@ -1,6 +1,6 @@
 import "./index.css";
-import AsapEntity from "./components/Home";
-import PostList from "./components/Posts";
+import AsapEntity from "./pages/Home";
+import PostList from "./pages/Posts";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 export default function App() {
