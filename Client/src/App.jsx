@@ -1,3 +1,4 @@
+import EditPage from "./components/EditDelete/EditPage";
 import "./index.css";
 import AsapEntity from "./pages/Home";
 import PostList from "./pages/Posts";
@@ -9,6 +10,7 @@ export default function App() {
       <Routes>
         <Route path="/about" element={<AsapEntity />} />
         <Route path="/posts" element={<PostList />} />
+        <Route path="/edit/:id" element={<EditPage />} />
       </Routes>
     </Router>
   );
