@@ -1,8 +1,15 @@
 import  { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import AddPost from '../components/AddPost';
+import EditDeleteBtn from '../components/EditDelete/EditDeleteBtn';
 
 const PostList = () => {
+    const refreshPosts = () => {
+        fetch("http://localhost:8888/posts")
+            .then((res) => res.json())
+            .then((data) => setPosts(data))
+            .catch((err) => console.error("Error fetching posts:", err));
+    };
     const [posts, setPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState({});
 
@@ -49,6 +56,7 @@ const PostList = () => {
                                 }`}
                             />
                             </button>
+                            <EditDeleteBtn postId={post._id} refreshPosts={refreshPosts} />
                         </div>
                         <div className="p-4">
                             <h3 className="text-lg font-semibold text-gray-800 mb-2">
