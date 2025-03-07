@@ -19,9 +19,16 @@ postRouter.post('/create/post', upload.single('image'), async (req, res) => {
     const { title, description, username } = req.body;
     const image = req.file ? req.file.path : null;
 
+    if (!title || !description || !username) {
+        return res.status(400).send({ "error": "Title, description, and username are required!" });
+    }
+
     if (!image) {
         return res.status(400).send({ "error": "Image file is required!" });
     }
+
+
+
 
     const payLoad = { image, title, description, username };
 

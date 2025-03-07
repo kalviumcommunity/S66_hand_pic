@@ -23,6 +23,11 @@ const EditPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!post.title || !post.description || !post.username) {
+            alert('All fields are required!');
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:8888/posts/${id}`, {
                 method: 'PUT',
