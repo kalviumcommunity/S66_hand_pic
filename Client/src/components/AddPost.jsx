@@ -21,6 +21,11 @@ function AddPost() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!formData.title || !formData.description || !formData.username || !formData.image) {
+            alert('All fields are required!');
+            return;
+        }
+
         const data = new FormData();
         data.append('title', formData.title);
         data.append('description', formData.description);
