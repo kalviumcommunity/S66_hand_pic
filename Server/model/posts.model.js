@@ -15,6 +15,11 @@ const PostSchema = mongoose.Schema({
     username:{
         type: String,
         required: true,
+    },
+    created_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 });
 

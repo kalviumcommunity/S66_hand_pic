@@ -30,7 +30,7 @@ postRouter.post('/create/post', upload.single('image'), async (req, res) => {
 
 
 
-    const payLoad = { image, title, description, username };
+    const payLoad = { image, title, description, username, created_by: req.user._id  };
 
     try {
         const new_post = new PostModel(payLoad);
