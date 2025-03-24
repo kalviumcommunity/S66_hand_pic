@@ -1,17 +1,21 @@
 import EditPage from "./components/EditDelete/EditPage";
 import "./index.css";
-import AsapEntity from "./pages/Home";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
 import PostList from "./pages/Posts";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import SignUp from "./pages/SignUp";
 
 export default function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/about" element={<AsapEntity />} />
+        <Route path="/" element={<Home />} />
         <Route path="/posts" element={<PostList />} />
         <Route path="/edit/:id" element={<EditPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
