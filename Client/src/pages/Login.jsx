@@ -25,7 +25,7 @@ const Login = () => {
         }
 
         try {
-            const response = await axios.post("https://s66-hand-pic.onrender.com/login", {
+            const response = await axios.post("http://localhost:8888/login", {
                 email,
                 password,
             }, { withCredentials: true });
