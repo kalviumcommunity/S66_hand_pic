@@ -2,12 +2,14 @@ const express = require('express');
 require('dotenv').config();
 const userRouter = express.Router();
 const UserModel = require('../model/user.model');
-const cookieParser = require('cookie-parser');
+const PostModel = require('../model/posts.model');
+const StatsModel = require('../model/stats.model');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const authenticate = require('./authMiddleware');
+const authenticate = require('../middleware/auth');
 
-userRouter.get('/users', authenticate, async (req, res) => {
+userRouter.get('/users', async (_req, res) => {
     try {
         const users = await UserModel.find({}, 'username');
         res.json(users);
@@ -47,15 +49,38 @@ userRouter.post('/login',async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });
 
-        const token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
-        res.json({ message: "Login successful" });
+        const token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '24h' });
+        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Lax' });
+        res.json({
+            message: "Login successful",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-userRouter.post('/logout',(req, res) => {
+userRouter.get('/auth/verify', authenticate, async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.user.id).select('-password');
+        res.json({
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                age: user.age
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+userRouter.post('/logout',(_req, res) => {
     res.clearCookie('token');
     res.json({ message: "Logout successful" });
 });
@@ -75,6 +100,47 @@ userRouter.delete('/users/:id',authenticate, async (req, res) => {
         const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
         if (!deletedUser) return res.status(404).json({ message: "User not found" });
         res.json({ message: "User deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get platform statistics
+userRouter.get('/stats', async (_req, res) => {
+    try {
+        // Get total users
+        const totalUsers = await UserModel.countDocuments();
+
+        // Get total posts
+        const totalPosts = await PostModel.countDocuments();
+
+        // Get total likes across all posts
+        const likesAggregation = await PostModel.aggregate([
+            { $group: { _id: null, totalLikes: { $sum: "$likesCount" } } }
+        ]);
+        const totalLikes = likesAggregation.length > 0 ? likesAggregation[0].totalLikes : 0;
+
+        // Get or create stats document
+        let stats = await StatsModel.findOne();
+        if (!stats) {
+            stats = new StatsModel({
+                totalViews: totalPosts * 50, // Mock initial views
+                dailyActiveUsers: Math.floor(totalUsers * 0.3) // Mock 30% daily active
+            });
+            await stats.save();
+        }
+
+        // Calculate growth rate (mock calculation)
+        const growthRate = totalUsers > 100 ? 12 : Math.floor(totalUsers / 10) + 5;
+
+        res.json({
+            totalUsers,
+            photosShared: totalPosts,
+            totalLikes,
+            totalViews: stats.totalViews + (totalPosts * 25), // Add some views
+            growthRate,
+            dailyActiveUsers: stats.dailyActiveUsers
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

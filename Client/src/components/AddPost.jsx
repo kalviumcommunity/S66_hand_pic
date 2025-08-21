@@ -1,13 +1,19 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { PhotoIcon, CloudArrowUpIcon } from '@heroicons/react/24/outline';
+import toast from 'react-hot-toast';
 
-function AddPost() {
+function AddPost({ onSuccess }) {
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        username: '',
         image: null
     });
+    const [imagePreview, setImagePreview] = useState(null);
+    const [uploading, setUploading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -15,85 +21,170 @@ function AddPost() {
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, image: e.target.files[0] });
+        const file = e.target.files[0];
+        if (file) {
+            setFormData({ ...formData, image: file });
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.title || !formData.description || !formData.username || !formData.image) {
-            alert('All fields are required!');
+        if (!formData.title || !formData.description || !formData.image) {
+            toast.error('All fields are required!');
             return;
         }
+
+        if (!user) {
+            toast.error('You must be logged in to create a post');
+            return;
+        }
+
+        setUploading(true);
 
         const data = new FormData();
         data.append('title', formData.title);
         data.append('description', formData.description);
-        data.append('username', formData.username);
+        data.append('username', user.username);
         data.append('image', formData.image);
 
         try {
-            const response = await axios.post('http://localhost:8888/create/post', data);
-            alert(response.data.message);
+            const response = await axios.post('http://localhost:8888/create/post', data, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            toast.success(response.data.message);
             setFormData({
                 title: '',
                 description: '',
-                username: '',
                 image: null
             });
+            setImagePreview(null);
+
+            if (onSuccess) {
+                onSuccess();
+            }
         } catch (error) {
-            alert('Failed to create post');
-            console.log(error);
+            toast.error(error.response?.data?.error || 'Failed to create post');
+            console.error(error);
+        } finally {
+            setUploading(false);
         }
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg space-y-4 w-full max-w-md">
-                <h2 className="text-xl font-bold text-center">Create New Post</h2>
-
+        <motion.form
+            onSubmit={handleSubmit}
+            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+        >
+            {/* Title Input */}
+            <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Title
+                </label>
                 <input
                     type="text"
                     name="title"
-                    placeholder="Title"
+                    placeholder="Give your hand picture a creative title..."
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    className="w-full p-2 border rounded"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                 />
+            </div>
 
+            {/* Description Input */}
+            <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Description
+                </label>
                 <textarea
                     name="description"
-                    placeholder="Description"
+                    placeholder="Tell the story behind your hand picture..."
                     value={formData.description}
                     onChange={handleChange}
                     required
-                    className="w-full p-2 border rounded"
-                ></textarea>
-
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
+                    rows={4}
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200 resize-none"
                 />
+            </div>
 
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    required
-                    className="w-full p-2 border rounded"
-                />
+            {/* Image Upload */}
+            <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Hand Picture
+                </label>
+                <div className="relative">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        required
+                        className="hidden"
+                        id="image-upload"
+                    />
+                    <label
+                        htmlFor="image-upload"
+                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 transition-colors duration-200 bg-gray-800/50"
+                    >
+                        {imagePreview ? (
+                            <div className="relative w-full h-full">
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover rounded-lg"
+                                />
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200 rounded-lg">
+                                    <p className="text-white text-sm">Click to change image</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <CloudArrowUpIcon className="w-12 h-12 text-gray-400 mb-4" />
+                                <p className="mb-2 text-sm text-gray-400">
+                                    <span className="font-semibold">Click to upload</span> or drag and drop
+                                </p>
+                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                            </div>
+                        )}
+                    </label>
+                </div>
+            </div>
 
-                <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-                    Submit Post
-                </button>
-            </form>
-        </div>
+            {/* Submit Button */}
+            <motion.button
+                type="submit"
+                disabled={uploading}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2"
+                whileHover={{ scale: uploading ? 1 : 1.02 }}
+                whileTap={{ scale: uploading ? 1 : 0.98 }}
+            >
+                {uploading ? (
+                    <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        <span>Uploading...</span>
+                    </>
+                ) : (
+                    <>
+                        <PhotoIcon className="w-5 h-5" />
+                        <span>Share Hand Picture</span>
+                    </>
+                )}
+            </motion.button>
+        </motion.form>
     );
 }
 

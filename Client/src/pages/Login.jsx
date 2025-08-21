@@ -1,40 +1,48 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import PasswordInput from "../components/PasswordInput";
 import { validateEmail } from "../utils/helper";
-import axios from "axios";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
+import { HandRaisedIcon } from "@heroicons/react/24/outline";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         if (!validateEmail(email)) {
-            setError("Enter valid email");
+            toast.error("Enter valid email");
             return;
         }
 
         if (!password) {
-            setError("Enter password");
+            toast.error("Enter password");
             return;
         }
 
+        setLoading(true);
+
         try {
-            const response = await axios.post("http://localhost:8888/login", {
-                email,
-                password,
-            }, { withCredentials: true });
+            const result = await login(email, password);
 
-            alert(response.data.message);
-            navigate("/");
-
-        } catch (error) {
-            setError(error.response?.data?.message || "Something went wrong");
+            if (result.success) {
+                toast.success("Welcome back!");
+                navigate("/");
+            } else {
+                toast.error(result.message);
+            }
+        } catch {
+            toast.error("Something went wrong");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -42,34 +50,75 @@ const Login = () => {
         <>
             <Navbar />
 
-            <div className="flex items-center justify-center mt-28">
-                <div className="w-96 border rounded bg-white px-7 py-10">
-                    <form onSubmit={handleLogin}>
-                        <h4 className="text-2xl mb-7">Login</h4>
+            <div className="min-h-screen bg-black flex items-center justify-center px-4">
+                <motion.div
+                    className="w-full max-w-md"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <div className="bg-gray-900 border border-gray-800 rounded-lg px-8 py-10">
+                        <div className="text-center mb-8">
+                            <HandRaisedIcon className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+                            <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+                            <p className="text-gray-400">Sign in to your account</p>
+                        </div>
 
-                        <input
-                            type="text"
-                            placeholder="Email"
-                            className="input-box"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
+                        <form onSubmit={handleLogin} className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200"
+                                    required
+                                />
+                            </div>
 
-                        <PasswordInput
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Password
+                                </label>
+                                <PasswordInput
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200"
+                                    placeholder="Enter your password"
+                                />
+                            </div>
 
-                        {error && <p className="text-red-500 text-xs pb-1">{error}</p>}
+                            <motion.button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
+                                whileHover={{ scale: loading ? 1 : 1.02 }}
+                                whileTap={{ scale: loading ? 1 : 0.98 }}
+                            >
+                                {loading ? (
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                ) : (
+                                    "Sign In"
+                                )}
+                            </motion.button>
 
-                        <button type="submit" className="btn-primary">Login</button>
-
-                        <p className="text-sm text-center mt-4">
-                            Not registered yet?{" "}
-                            <Link to="/signup" className="font-medium text-blue-400 underline">Create an account</Link>
-                        </p>
-                    </form>
-                </div>
+                            <div className="text-center">
+                                <p className="text-gray-400">
+                                    Don&apos;t have an account?{" "}
+                                    <Link
+                                        to="/signup"
+                                        className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200"
+                                    >
+                                        Create one here
+                                    </Link>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </motion.div>
             </div>
         </>
     );
