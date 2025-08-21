@@ -22,7 +22,7 @@ const SignUp = () => {
         if (!age || isNaN(age) || age < 1) return setError("Enter valid age");
 
         try {
-            const response = await axios.post("https://s66-hand-pic.onrender.com/signup", {
+            const response = await axios.post("http://localhost:8888/signup", {
                 username: name,
                 email,
                 password,

@@ -7,7 +7,22 @@ const userRouter = require('./routes/user')
 const postRouter = require('./routes/post')
 
 app.use(express.json());
-app.use(cors());
+
+app.use(cors({ 
+    origin: "http://localhost:5173", // Allow only your frontend
+    methods: "GET, POST, PUT, DELETE, OPTIONS", // Allow these HTTP methods
+    allowedHeaders: "Content-Type, Authorization", // Allow these headers
+    credentials: true // Explicitly allow credentials
+}));
+
+app.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true"); // Add this
+    res.sendStatus(200);
+});
+
 app.use('/uploads', express.static('uploads'));
 
 
