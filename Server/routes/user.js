@@ -50,7 +50,15 @@ userRouter.post('/login',async (req, res) => {
         if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });
 
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '24h' });
-        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Lax' });
+
+        // Configure cookie for production
+        const isProduction = process.env.NODE_ENV === 'production';
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: isProduction, // Use secure cookies in production
+            sameSite: isProduction ? 'None' : 'Lax', // Allow cross-site cookies in production
+            domain: isProduction ? '.onrender.com' : undefined // Set domain for production
+        });
         res.json({
             message: "Login successful",
             user: {
@@ -81,7 +89,13 @@ userRouter.get('/auth/verify', authenticate, async (req, res) => {
 });
 
 userRouter.post('/logout',(_req, res) => {
-    res.clearCookie('token');
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'None' : 'Lax',
+        domain: isProduction ? '.onrender.com' : undefined
+    });
     res.json({ message: "Logout successful" });
 });
 

@@ -49,3 +49,55 @@ This project will help me learn important web development skills like:
 - Making the site user-friendly and accessible.  
 
 It’s a great way to practice these skills while making something fun for people.
+
+## 🔧 Deployment Configuration
+
+### CORS Setup
+The backend is configured to allow requests from:
+- `http://localhost:5173` (Local Vite dev)
+- `http://localhost:5174` (Local Vite dev)
+- `https://handscape-o.netlify.app` (Production frontend)
+- `https://s66-hand-pic.onrender.com` (Production backend)
+
+### Cookie Configuration
+- **Development**: `secure: false, sameSite: 'Lax'`
+- **Production**: `secure: true, sameSite: 'None', domain: '.onrender.com'`
+
+### Environment Variables Required
+```env
+NODE_ENV=production
+PORT=8888
+mongoURI=mongodb+srv://...
+SECRET_KEY=your_secret_key
+```
+
+## 🐛 Troubleshooting CORS Issues
+
+If you see CORS errors like:
+```
+Access to XMLHttpRequest at 'http://localhost:8888/...' from origin 'https://handscape-o.netlify.app' has been blocked by CORS policy
+```
+
+**Solutions:**
+1. **Deploy your backend** - The frontend is trying to connect to localhost instead of production
+2. **Update environment** - Set `NODE_ENV=production` on Render
+3. **Check URLs** - Ensure all API calls use `https://s66-hand-pic.onrender.com`
+4. **Verify CORS config** - Backend allows your Netlify domain
+
+## 🚀 Quick Fix Commands
+
+**Restart backend with production settings:**
+```bash
+cd Server
+NODE_ENV=production npm start
+```
+
+**Check backend status:**
+```bash
+curl https://s66-hand-pic.onrender.com/ping
+```
+
+**Verify CORS configuration:**
+```bash
+curl -H "Origin: https://handscape-o.netlify.app" https://s66-hand-pic.onrender.com/
+```
