@@ -2,10 +2,10 @@
 https://s66-hand-pic.onrender.com/ping
 
 ## Frontend-deploy Link:
-https://frontend-deploy.handypic.pages.dev
+https://handscape-o.netlify.app/
 
 # Project Title:  
-**Unique Hand Pictures**
+**HandScape**
 
 ## Project Overview:  
 This project is all about hands – funny, creative, and unique hand pictures! Users can upload their hand photos, view others' submissions, and vote for the best ones. It’s a fun way to celebrate creativity and share interesting hand moments with the community.
