@@ -32,7 +32,7 @@ const Profile = () => {
 
     const fetchUserPosts = async () => {
         try {
-            const response = await fetch(`http://localhost:8888/posts`);
+            const response = await fetch(`https://s66-hand-pic.onrender.com/posts`);
             const posts = await response.json();
             const userSpecificPosts = posts.filter(post => post.created_by === user.id);
             setUserPosts(userSpecificPosts);
@@ -51,7 +51,7 @@ const Profile = () => {
 
     const fetchLikedPosts = async () => {
         try {
-            const response = await fetch('http://localhost:8888/user/liked-posts', {
+            const response = await fetch('https://s66-hand-pic.onrender.com/user/liked-posts', {
                 credentials: 'include'
             });
             const posts = await response.json();
@@ -98,7 +98,7 @@ const Profile = () => {
                 >
                     <div className="aspect-square relative overflow-hidden">
                         <img
-                            src={`http://localhost:8888/${post.image}`}
+                            src={`https://s66-hand-pic.onrender.com/${post.image}`}
                             alt={post.title}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />

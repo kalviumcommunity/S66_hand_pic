@@ -24,13 +24,13 @@ export default function Home() {
 
     useEffect(() => {
         // Fetch real statistics
-        fetch('http://localhost:8888/stats')
+        fetch('https://s66-hand-pic.onrender.com/stats')
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(err => console.error('Error fetching stats:', err));
 
         // Fetch top 3 most liked posts
-        fetch('http://localhost:8888/posts?sortBy=likes&order=desc')
+        fetch('https://s66-hand-pic.onrender.com/posts?sortBy=likes&order=desc')
             .then(res => res.json())
             .then(data => setFeaturedPosts(data.slice(0, 3)))
             .catch(err => console.error('Error fetching featured posts:', err));
@@ -183,7 +183,7 @@ export default function Home() {
                                 >
                                     <div className="aspect-square relative overflow-hidden">
                                         <img
-                                            src={`http://localhost:8888/${post.image}`}
+                                            src={`https://s66-hand-pic.onrender.com/${post.image}`}
                                             alt={post.title}
                                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                                         />

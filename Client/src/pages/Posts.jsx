@@ -56,7 +56,7 @@ const PostList = () => {
     const fetchPosts = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:8888/posts?sortBy=${sortBy}&order=${sortOrder}`);
+            const response = await fetch(`https://s66-hand-pic.onrender.com/posts?sortBy=${sortBy}&order=${sortOrder}`);
             const data = await response.json();
             setPosts(data);
         } catch (err) {
@@ -69,7 +69,7 @@ const PostList = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://localhost:8888/users");
+            const response = await fetch("https://s66-hand-pic.onrender.com/users");
             const data = await response.json();
             setUsers(data);
         } catch (err) {
@@ -79,7 +79,7 @@ const PostList = () => {
 
     const loadUserLikes = async () => {
         try {
-            const response = await fetch('http://localhost:8888/user/liked-posts', {
+            const response = await fetch('https://s66-hand-pic.onrender.com/user/liked-posts', {
                 credentials: 'include'
             });
             const likedPostsData = await response.json();
@@ -100,7 +100,7 @@ const PostList = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8888/posts/${postId}/like`, {
+            const response = await fetch(`https://s66-hand-pic.onrender.com/posts/${postId}/like`, {
                 method: 'POST',
                 credentials: 'include'
             });
@@ -275,7 +275,7 @@ const PostList = () => {
                                 >
                                     <div className="aspect-square relative overflow-hidden">
                                         <img
-                                            src={`http://localhost:8888/${post.image}`}
+                                            src={`https://s66-hand-pic.onrender.com/${post.image}`}
                                             alt={post.title}
                                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                                         />

@@ -11,7 +11,7 @@ const EditDeleteBtn = ({ postId, refreshPosts }) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this post?");
         if (confirmDelete) {
             try {
-                await fetch(`http://localhost:8888/posts/${postId}`, { method: 'DELETE' });
+                await fetch(`https://s66-hand-pic.onrender.com/posts/${postId}`, { method: 'DELETE' });
                 refreshPosts();
             } catch (err) {
                 console.error("Error deleting post:", err);

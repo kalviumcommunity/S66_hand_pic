@@ -11,7 +11,7 @@ const EditPage = () => {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:8888/posts/${id}`)
+        fetch(`https://s66-hand-pic.onrender.com/posts/${id}`)
             .then(res => res.json())
             .then(data => setPost(data))
             .catch(err => console.error("Error fetching post data:", err));
@@ -29,7 +29,7 @@ const EditPage = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8888/posts/${id}`, {
+            const response = await fetch(`https://s66-hand-pic.onrender.com/posts/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(post)

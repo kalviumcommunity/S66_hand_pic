@@ -56,7 +56,7 @@ function AddPost({ onSuccess }) {
         data.append('image', formData.image);
 
         try {
-            const response = await axios.post('http://localhost:8888/create/post', data, {
+            const response = await axios.post('https://s66-hand-pic.onrender.com/create/post', data, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data'

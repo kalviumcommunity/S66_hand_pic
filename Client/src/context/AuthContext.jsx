@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthStatus = async () => {
         try {
-            const response = await axios.get('http://localhost:8888/auth/verify', {
+            const response = await axios.get('https://s66-hand-pic.onrender.com/auth/verify', {
                 withCredentials: true
             });
             if (response.data.user) {
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await axios.post('http://localhost:8888/login', {
+            const response = await axios.post('https://s66-hand-pic.onrender.com/login', {
                 email,
                 password
             }, { withCredentials: true });
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
     const signup = async (userData) => {
         try {
-            const response = await axios.post('http://localhost:8888/signup', userData);
+            const response = await axios.post('https://s66-hand-pic.onrender.com/signup', userData);
             return { success: true, message: response.data.message };
         } catch (error) {
             return { 
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await axios.post('http://localhost:8888/logout', {}, { withCredentials: true });
+            await axios.post('https://s66-hand-pic.onrender.com/logout', {}, { withCredentials: true });
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
