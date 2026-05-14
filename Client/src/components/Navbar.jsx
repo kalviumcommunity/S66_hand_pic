@@ -7,11 +7,11 @@ import {
     Bars3Icon,
     XMarkIcon,
     UserIcon,
-    ArrowRightOnRectangleIcon,
     PhotoIcon,
     HomeIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import Logo from '../assets/logo.png';
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,24 +27,22 @@ const Navbar = () => {
 
     const navItems = [
         { name: 'Home', path: '/', icon: HomeIcon },
-        { name: 'Posts', path: '/posts', icon: PhotoIcon },
+        { name: 'Gallery', path: '/posts', icon: PhotoIcon },
     ];
 
-
-
     return (
-        <nav className="bg-black border-b border-gray-800 sticky top-0 z-50">
+        <nav className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <Link to="/" className="flex items-center space-x-2">
-                        <motion.h1
-                            className="text-2xl font-bold text-blue-500"
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ type: "spring", stiffness: 300 }}
+                        <motion.div
+                            className="flex items-center"
+                            whileHover={{ scale: 1.02 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
                         >
-                            Handscape
-                        </motion.h1>
+                            <img src={Logo} alt="Handscape" className="h-9 w-auto" />
+                        </motion.div>
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -53,28 +51,26 @@ const Navbar = () => {
                             <Link
                                 key={item.name}
                                 to={item.path}
-                                className="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex items-center space-x-1"
+                                className="text-slate-600 hover:text-indigo-600 font-medium transition-colors duration-200 flex items-center space-x-1.5"
                             >
                                 <item.icon className="w-5 h-5" />
                                 <span>{item.name}</span>
                             </Link>
                         ))}
 
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-4 pl-4 border-l border-slate-200">
                             {isAuthenticated ? (
                                 <>
-                                    <span className="text-gray-400 text-sm">
-                                        Welcome, {user?.username}
-                                    </span>
                                     <Link
                                         to="/profile"
-                                        className="text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                                        className="text-slate-600 hover:text-indigo-600 font-medium transition-colors duration-200 flex items-center space-x-1"
                                     >
-                                        Profile
+                                        <UserIcon className="w-5 h-5" />
+                                        <span>{user?.username}</span>
                                     </Link>
                                     <button
                                         onClick={handleLogout}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                                        className="text-slate-600 hover:text-red-600 font-medium transition-colors duration-200 text-sm"
                                     >
                                         Logout
                                     </button>
@@ -83,15 +79,15 @@ const Navbar = () => {
                                 <>
                                     <Link
                                         to="/login"
-                                        className="text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                                        className="text-slate-600 hover:text-indigo-600 font-medium transition-colors duration-200"
                                     >
-                                        Login
+                                        Log in
                                     </Link>
                                     <Link
                                         to="/signup"
-                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all duration-200"
                                     >
-                                        Sign Up
+                                        Sign up
                                     </Link>
                                 </>
                             )}
@@ -102,7 +98,7 @@ const Navbar = () => {
                     <div className="md:hidden">
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="text-gray-300 hover:text-white p-2"
+                            className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 p-2 rounded-lg transition-colors"
                         >
                             {isMenuOpen ? (
                                 <XMarkIcon className="w-6 h-6" />
@@ -118,18 +114,18 @@ const Navbar = () => {
             <AnimatePresence>
                 {isMenuOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-gray-900 border-t border-gray-800"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="md:hidden bg-white border-t border-slate-100 shadow-lg"
                     >
-                        <div className="px-4 py-4 space-y-3">
+                        <div className="px-4 py-4 space-y-2">
                             {navItems.map((item) => (
                                 <Link
                                     key={item.name}
                                     to={item.path}
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2 py-2"
+                                    className="text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg font-medium transition-all duration-200 flex items-center space-x-3 p-3"
                                 >
                                     <item.icon className="w-5 h-5" />
                                     <span>{item.name}</span>
@@ -137,41 +133,37 @@ const Navbar = () => {
                             ))}
 
                             {isAuthenticated ? (
-                                <>
-                                    <div className="border-t border-gray-700 pt-3">
-                                        <p className="text-gray-400 text-sm mb-3">
-                                            Welcome, {user?.username}
-                                        </p>
-                                        <Link
-                                            to="/profile"
-                                            onClick={() => setIsMenuOpen(false)}
-                                            className="block text-gray-300 hover:text-blue-400 transition-colors duration-200 py-2"
-                                        >
-                                            Profile
-                                        </Link>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full text-left text-gray-300 hover:text-blue-400 transition-colors duration-200 py-2"
-                                        >
-                                            Logout
-                                        </button>
-                                    </div>
-                                </>
+                                <div className="border-t border-slate-100 pt-2 mt-2 space-y-1">
+                                    <Link
+                                        to="/profile"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="flex items-center space-x-3 text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg font-medium p-3"
+                                    >
+                                        <UserIcon className="w-5 h-5" />
+                                        <span>Profile ({user?.username})</span>
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full text-left text-slate-600 hover:text-red-600 hover:bg-slate-50 rounded-lg font-medium transition-all duration-200 p-3"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
                             ) : (
-                                <div className="border-t border-gray-700 pt-3 space-y-2">
+                                <div className="border-t border-slate-100 pt-3 mt-2 space-y-2 px-1">
                                     <Link
                                         to="/login"
                                         onClick={() => setIsMenuOpen(false)}
-                                        className="block text-gray-300 hover:text-blue-400 transition-colors duration-200 py-2"
+                                        className="block text-center text-slate-700 hover:text-slate-900 font-medium transition-colors duration-200 py-2"
                                     >
-                                        Login
+                                        Log in
                                     </Link>
                                     <Link
                                         to="/signup"
                                         onClick={() => setIsMenuOpen(false)}
-                                        className="block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-center"
+                                        className="block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition-colors duration-200 font-medium text-center shadow-sm"
                                     >
-                                        Sign Up
+                                        Sign up free
                                     </Link>
                                 </div>
                             )}

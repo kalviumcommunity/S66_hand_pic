@@ -75,7 +75,7 @@ SECRET_KEY=your_secret_key
 
 If you see CORS errors like:
 ```
-Access to XMLHttpRequest at 'http://localhost:8888/...' from origin 'https://handscape-o.netlify.app' has been blocked by CORS policy
+Access to XMLHttpRequest at 'https://s66-hand-pic.onrender.com/...' from origin 'https://handscape-o.netlify.app' has been blocked by CORS policy
 ```
 
 **Solutions:**

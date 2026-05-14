@@ -87,21 +87,38 @@ postRouter.get('/posts/:id', async (req, res) => {
     }
 });
 
-postRouter.put('/posts/:id', async (req, res) => {
+postRouter.put('/posts/:id', authenticate, async (req, res) => {
     try {
-        const updatedPost = await PostModel.findByIdAndUpdate
-        (req.params.id, req.body, { new: true });
-        if (!updatedPost) return res.status(404).json({ message: "Post not found" });
+        const post = await PostModel.findById(req.params.id);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+        
+        // Check ownership
+        if (post.created_by.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Unauthorized: You can only update your own posts" });
+        }
+
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            req.params.id, 
+            { title: req.body.title, description: req.body.description }, 
+            { new: true }
+        );
         res.json(updatedPost);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
 });
 
-postRouter.delete('/posts/:id', async (req, res) => {
+postRouter.delete('/posts/:id', authenticate, async (req, res) => {
     try {
-        const deletedPost = await PostModel.findByIdAndDelete(req.params.id);
-        if (!deletedPost) return res.status(404).json({ message: "Post not found" });
+        const post = await PostModel.findById(req.params.id);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+        
+        // Check ownership
+        if (post.created_by.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Unauthorized: You can only delete your own posts" });
+        }
+
+        await PostModel.findByIdAndDelete(req.params.id);
         res.json({ message: "Post deleted successfully" });
     } catch (err) {
         res.status(500).json({ error: err.message });

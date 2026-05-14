@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 import { useAuth } from '../context/AuthContext';
+import { API_CONFIG } from '../config/environment';
 import {
     HandRaisedIcon,
     HeartIcon,
@@ -10,6 +11,7 @@ import {
     PhotoIcon,
     UserGroupIcon
 } from '@heroicons/react/24/outline';
+import api from '../utils/api';
 
 export default function Home() {
     const { isAuthenticated } = useAuth();
@@ -23,17 +25,21 @@ export default function Home() {
     const [featuredPosts, setFeaturedPosts] = useState([]);
 
     useEffect(() => {
-        // Fetch real statistics
-        fetch('https://s66-hand-pic.onrender.com/stats')
-            .then(res => res.json())
-            .then(data => setStats(data))
-            .catch(err => console.error('Error fetching stats:', err));
+        const fetchData = async () => {
+            try {
+                // Fetch real statistics
+                const statsResponse = await api.get('/stats');
+                setStats(statsResponse.data);
+                
+                // Fetch top 3 most liked posts
+                const postsResponse = await api.get('/posts?sortBy=likes&order=desc');
+                setFeaturedPosts(postsResponse.data.slice(0, 3));
+            } catch (err) {
+                console.error('Error fetching home data:', err);
+            }
+        };
 
-        // Fetch top 3 most liked posts
-        fetch('https://s66-hand-pic.onrender.com/posts?sortBy=likes&order=desc')
-            .then(res => res.json())
-            .then(data => setFeaturedPosts(data.slice(0, 3)))
-            .catch(err => console.error('Error fetching featured posts:', err));
+        fetchData();
     }, []);
 
     const containerVariants = {
@@ -63,179 +69,175 @@ export default function Home() {
 
             {/* Hero Section */}
             <motion.div
-                className="relative min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center"
+                className="relative min-h-[90vh] bg-gray-50 bg-dots flex items-center justify-center overflow-hidden"
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
             >
-                <div className="absolute inset-0 bg-blue-500/5"></div>
-                <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+                {/* Decorative mesh gradient glow */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-purple-300/20 blur-3xl rounded-full -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-300/20 blur-3xl rounded-full translate-y-1/2 -translate-x-1/3"></div>
+
+                <div className="relative z-10 max-w-5xl mx-auto px-4 text-center pt-16 pb-24">
+                    <motion.div variants={itemVariants} className="mb-6 flex justify-center">
+                        <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 text-sm font-semibold tracking-wide uppercase rounded-full border border-indigo-100 shadow-sm">
+                            Community
+                        </span>
+                    </motion.div>
+                    
                     <motion.div variants={itemVariants}>
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6">
-                            Welcome to <span className="text-blue-500">Handscape</span>
+                        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8">
+                            Built for stories.<br />
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-fuchsia-600">Designed for hands.</span>
                         </h1>
                     </motion.div>
 
                     <motion.p
-                        className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
+                        className="text-xl md:text-2xl text-slate-600 mb-10 max-w-2xl mx-auto font-medium leading-relaxed"
                         variants={itemVariants}
                     >
-                        Join our creative community where hands tell stories.
-                        Upload, discover, and vote on the most creative hand photography.
+                        Join our minimal creative platform where hands tell a thousand stories.
+                        Discover, upload, and appreciate unique photography.
                     </motion.p>
 
                     <motion.div
-                        className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+                        className="flex flex-col sm:flex-row gap-4 justify-center mb-20"
                         variants={itemVariants}
                     >
                         {isAuthenticated ? (
                             <Link
                                 to="/posts"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl shadow-indigo-600/20 transition-all duration-300 transform hover:scale-[1.02]"
                             >
-                                Start Sharing
+                                Open Gallery
                             </Link>
                         ) : (
                             <Link
                                 to="/signup"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl shadow-indigo-600/20 transition-all duration-300 transform hover:scale-[1.02]"
                             >
-                                Get Started Today
+                                Get Started Free
                             </Link>
                         )}
                         <Link
                             to="/posts"
-                            className="border border-gray-600 hover:border-blue-500 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 hover:bg-blue-500/10"
+                            className="bg-white border border-slate-200 hover:border-indigo-200 text-slate-700 hover:bg-slate-50 px-8 py-4 rounded-2xl text-lg font-semibold shadow-sm transition-all duration-300"
                         >
-                            Browse Gallery
+                            Explore Feed
                         </Link>
                     </motion.div>
 
                     {/* Stats Section */}
                     <motion.div
-                        className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16"
+                        className="grid grid-cols-2 md:grid-cols-4 gap-6"
                         variants={itemVariants}
                     >
-                        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
-                            <div className="flex items-center justify-center mb-2">
-                                <UserGroupIcon className="w-8 h-8 text-blue-500" />
+                        <div className="bg-white shadow-xl shadow-slate-200/50 rounded-3xl p-6 border border-slate-100 hover:border-slate-200 transition-colors">
+                            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-indigo-50 rounded-2xl mb-4">
+                                <UserGroupIcon className="w-6 h-6 text-indigo-600" />
                             </div>
-                            <div className="text-3xl font-bold text-white">{stats.totalUsers?.toLocaleString() || 0}</div>
-                            <div className="text-gray-400">Total Users</div>
+                            <div className="text-3xl font-bold text-slate-900 mb-1">{stats.totalUsers?.toLocaleString() || 0}</div>
+                            <div className="text-slate-500 font-medium text-sm tracking-wide uppercase">Users</div>
                         </div>
 
-                        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
-                            <div className="flex items-center justify-center mb-2">
-                                <PhotoIcon className="w-8 h-8 text-blue-500" />
+                        <div className="bg-white shadow-xl shadow-slate-200/50 rounded-3xl p-6 border border-slate-100 hover:border-slate-200 transition-colors">
+                            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-blue-50 rounded-2xl mb-4">
+                                <PhotoIcon className="w-6 h-6 text-blue-600" />
                             </div>
-                            <div className="text-3xl font-bold text-white">{stats.photosShared?.toLocaleString() || 0}</div>
-                            <div className="text-gray-400">Photos Shared</div>
+                            <div className="text-3xl font-bold text-slate-900 mb-1">{stats.photosShared?.toLocaleString() || 0}</div>
+                            <div className="text-slate-500 font-medium text-sm tracking-wide uppercase">Photos</div>
                         </div>
 
-                        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
-                            <div className="flex items-center justify-center mb-2">
-                                <HeartIcon className="w-8 h-8 text-red-500" />
+                        <div className="bg-white shadow-xl shadow-slate-200/50 rounded-3xl p-6 border border-slate-100 hover:border-slate-200 transition-colors">
+                            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-fuchsia-50 rounded-2xl mb-4">
+                                <HeartIcon className="w-6 h-6 text-fuchsia-600" />
                             </div>
-                            <div className="text-3xl font-bold text-white">{stats.totalLikes?.toLocaleString() || 0}</div>
-                            <div className="text-gray-400">Total Likes</div>
+                            <div className="text-3xl font-bold text-slate-900 mb-1">{stats.totalLikes?.toLocaleString() || 0}</div>
+                            <div className="text-slate-500 font-medium text-sm tracking-wide uppercase">Appreciation</div>
                         </div>
 
-                        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
-                            <div className="flex items-center justify-center mb-2">
-                                <ArrowUpIcon className="w-8 h-8 text-green-500" />
+                        <div className="bg-white shadow-xl shadow-slate-200/50 rounded-3xl p-6 border border-slate-100 hover:border-slate-200 transition-colors">
+                            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-emerald-50 rounded-2xl mb-4">
+                                <ArrowUpIcon className="w-6 h-6 text-emerald-600" />
                             </div>
-                            <div className="text-3xl font-bold text-white">+{stats.growthRate || 0}%</div>
-                            <div className="text-gray-400">Growth Rate</div>
+                            <div className="text-3xl font-bold text-slate-900 mb-1">+{stats.growthRate || 0}%</div>
+                            <div className="text-slate-500 font-medium text-sm tracking-wide uppercase">Growth</div>
                         </div>
                     </motion.div>
                 </div>
             </motion.div>
 
-            {/* Featured Hand Art Section */}
+            {/* Featured Section */}
             <motion.section
-                className="py-20 bg-gray-900"
+                className="py-24 bg-white border-t border-slate-100"
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-100px" }}
                 variants={containerVariants}
             >
-                <div className="max-w-6xl mx-auto px-4">
+                <div className="max-w-7xl mx-auto px-6">
                     <motion.div className="text-center mb-16" variants={itemVariants}>
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                            Featured Hand Art
+                        <span className="text-indigo-600 font-semibold uppercase tracking-wider text-sm">Curation</span>
+                        <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-4">
+                            Featured Works
                         </h2>
-                        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                            Discover the most creative submissions from our community
+                        <p className="text-lg text-slate-600 max-w-xl mx-auto">
+                            The absolute finest submissions recently recognized by our global creative circle
                         </p>
                     </motion.div>
 
                     <motion.div
-                        className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
+                        className="max-w-3xl mx-auto mb-16"
                         variants={containerVariants}
                     >
                         {featuredPosts.length > 0 ? (
-                            featuredPosts.map((post) => (
-                                <motion.div
-                                    key={post._id}
-                                    className="group relative bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300"
-                                    variants={itemVariants}
-                                    whileHover={{ y: -5 }}
-                                >
-                                    <div className="aspect-square relative overflow-hidden">
-                                        <img
-                                            src={`https://s66-hand-pic.onrender.com/${post.image}`}
-                                            alt={post.title}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                        <div className="absolute bottom-4 left-4 right-4">
-                                            <HandRaisedIcon className="w-8 h-8 text-yellow-400 mb-2" />
-                                            <h3 className="text-white font-semibold text-lg">{post.title}</h3>
-                                            <p className="text-gray-300 text-sm">by {post.username}</p>
-                                        </div>
+                            <motion.div
+                                className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 border border-slate-100 transition-all duration-300"
+                                variants={itemVariants}
+                                whileHover={{ y: -8 }}
+                            >
+                                <div className="aspect-[4/3] sm:aspect-video relative overflow-hidden bg-slate-100">
+                                    <img
+                                        src={`${API_CONFIG.BASE_URL}/${featuredPosts[0].image}`}
+                                        alt={featuredPosts[0].title}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="absolute top-6 right-6 z-20 flex items-center space-x-1.5 bg-white/90 backdrop-blur-md text-fuchsia-600 px-4 py-2 rounded-full font-bold shadow-sm">
+                                        <HeartIcon className="w-5 h-5 fill-fuchsia-600 text-fuchsia-600" />
+                                        <span>{featuredPosts[0].likesCount || 0} Likes</span>
                                     </div>
-                                    <div className="p-4">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-400 text-sm">{post.title}</span>
-                                            <div className="flex items-center space-x-1 text-blue-400">
-                                                <HeartIcon className="w-4 h-4" />
-                                                <span className="text-sm">{post.likesCount || 0}</span>
+                                    <div className="absolute bottom-8 left-8 right-8 z-20">
+                                        <div className="flex items-center space-x-2 mb-3">
+                                            <div className="bg-white/20 backdrop-blur-md rounded-full p-2">
+                                                <HandRaisedIcon className="w-5 h-5 text-white" />
                                             </div>
+                                            <span className="text-sm font-bold text-white tracking-wider uppercase bg-black/30 backdrop-blur-md px-3 py-1 rounded-full">#1 Featured</span>
                                         </div>
+                                        <h3 className="text-white font-extrabold text-3xl md:text-4xl truncate">{featuredPosts[0].title}</h3>
+                                        <p className="text-slate-200 text-lg mt-1 font-medium">Captured by {featuredPosts[0].username}</p>
                                     </div>
-                                </motion.div>
-                            ))
+                                </div>
+                            </motion.div>
                         ) : (
-                            // Placeholder cards when no posts are available
-                            [1, 2, 3].map((index) => (
-                                <motion.div
-                                    key={index}
-                                    className="group relative bg-gray-800 rounded-lg overflow-hidden border border-gray-700"
-                                    variants={itemVariants}
-                                >
-                                    <div className="aspect-square relative overflow-hidden bg-gray-700 flex items-center justify-center">
-                                        <HandRaisedIcon className="w-16 h-16 text-gray-500" />
-                                    </div>
-                                    <div className="p-4">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-400 text-sm">Amazing Hand Art</span>
-                                            <div className="flex items-center space-x-1 text-blue-400">
-                                                <HeartIcon className="w-4 h-4" />
-                                                <span className="text-sm">{Math.floor(Math.random() * 50) + 10}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))
+                            <motion.div
+                                className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 border border-slate-100"
+                                variants={itemVariants}
+                            >
+                                <div className="aspect-[4/3] sm:aspect-video relative overflow-hidden bg-slate-50 flex flex-col items-center justify-center">
+                                    <HandRaisedIcon className="w-20 h-20 text-slate-200 animate-pulse mb-4" />
+                                    <p className="text-slate-400 font-bold text-lg">Awaiting top curation...</p>
+                                </div>
+                            </motion.div>
                         )}
                     </motion.div>
 
                     <motion.div className="text-center" variants={itemVariants}>
                         <Link
                             to="/posts"
-                            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                            className="inline-flex items-center bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-2xl font-bold transition-all shadow-lg transform hover:scale-[1.02]"
                         >
-                            View All Posts
+                            Explore Full Gallery
                         </Link>
                     </motion.div>
                 </div>
@@ -243,28 +245,34 @@ export default function Home() {
 
             {/* Call to Action Section */}
             <motion.section
-                className="py-20 bg-black"
+                className="py-24 bg-gray-50 relative overflow-hidden border-t border-slate-100"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={containerVariants}
             >
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <motion.div variants={itemVariants}>
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                            Ready to Share Your Art?
-                        </h2>
-                        <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-                            Join thousands of creative sharing their unique hand photography
-                        </p>
-                        {!isAuthenticated && (
-                            <Link
-                                to="/signup"
-                                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
-                            >
-                                Get Started Today
-                            </Link>
-                        )}
+                <div className="bg-dots absolute inset-0 opacity-70"></div>
+                <div className="max-w-2xl mx-auto px-6 text-center relative z-10">
+                    <motion.div variants={itemVariants} className="bg-indigo-600 rounded-[2.5rem] p-8 md:p-10 shadow-xl shadow-indigo-200 overflow-hidden relative">
+                        {/* decorative circle */}
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3"></div>
+                        
+                        <div className="relative z-10">
+                            <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight">
+                                Inspired to share your perspective?
+                            </h2>
+                            <p className="text-indigo-100 text-base font-medium mb-6 max-w-md mx-auto opacity-90">
+                                Join our global community and showcase your hand artistry to other enthusiasts.
+                            </p>
+                            {!isAuthenticated && (
+                                <Link
+                                    to="/signup"
+                                    className="inline-block bg-white text-indigo-600 px-8 py-3.5 rounded-xl font-bold shadow-md hover:bg-indigo-50 transition-all duration-300 transform hover:scale-[1.02]"
+                                >
+                                    Register Account
+                                </Link>
+                            )}
+                        </div>
                     </motion.div>
                 </div>
             </motion.section>

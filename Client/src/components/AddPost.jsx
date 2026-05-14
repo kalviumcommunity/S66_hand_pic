@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { PhotoIcon, CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
@@ -56,8 +56,7 @@ function AddPost({ onSuccess }) {
         data.append('image', formData.image);
 
         try {
-            const response = await axios.post('https://s66-hand-pic.onrender.com/create/post', data, {
-                withCredentials: true,
+            const response = await api.post('/create/post', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -86,46 +85,46 @@ function AddPost({ onSuccess }) {
         <motion.form
             onSubmit={handleSubmit}
             className="space-y-6"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
         >
             {/* Title Input */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-bold text-slate-700 mb-2 tracking-wide">
                     Title
                 </label>
                 <input
                     type="text"
                     name="title"
-                    placeholder="Give your hand picture a creative title..."
+                    placeholder="Snapshot Heading..."
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
                 />
             </div>
 
             {/* Description Input */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Description
+                <label className="block text-sm font-bold text-slate-700 mb-2 tracking-wide">
+                    Narrative Description
                 </label>
                 <textarea
                     name="description"
-                    placeholder="Tell the story behind your hand picture..."
+                    placeholder="Compose a short context about this capture..."
                     value={formData.description}
                     onChange={handleChange}
                     required
-                    rows={4}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200 resize-none"
+                    rows={3}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium resize-none"
                 />
             </div>
 
             {/* Image Upload */}
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Hand Picture
+                <label className="block text-sm font-bold text-slate-700 mb-2 tracking-wide">
+                    Visual Asset
                 </label>
                 <div className="relative">
                     <input
@@ -138,26 +137,29 @@ function AddPost({ onSuccess }) {
                     />
                     <label
                         htmlFor="image-upload"
-                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 transition-colors duration-200 bg-gray-800/50"
+                        className="flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-slate-200 hover:border-indigo-500 rounded-2xl cursor-pointer transition-all duration-200 bg-slate-50 hover:bg-indigo-50/30 group relative overflow-hidden"
                     >
                         {imagePreview ? (
                             <div className="relative w-full h-full">
                                 <img
                                     src={imagePreview}
                                     alt="Preview"
-                                    className="w-full h-full object-cover rounded-lg"
+                                    className="w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200 rounded-lg">
-                                    <p className="text-white text-sm">Click to change image</p>
+                                <div className="absolute inset-0 bg-indigo-900/60 backdrop-blur-[1px] flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                    <CloudArrowUpIcon className="w-8 h-8 text-white mb-1" />
+                                    <p className="text-white text-xs font-bold">Replace Resource</p>
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <CloudArrowUpIcon className="w-12 h-12 text-gray-400 mb-4" />
-                                <p className="mb-2 text-sm text-gray-400">
-                                    <span className="font-semibold">Click to upload</span> or drag and drop
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
+                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 mb-4 text-slate-400 group-hover:text-indigo-500 transition-colors">
+                                    <PhotoIcon className="w-7 h-7" />
+                                </div>
+                                <p className="mb-1 text-sm font-bold text-slate-700">
+                                    Click to browse artifact
                                 </p>
-                                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                <p className="text-xs text-slate-500">Select image up to 10MB</p>
                             </div>
                         )}
                     </label>
@@ -168,19 +170,19 @@ function AddPost({ onSuccess }) {
             <motion.button
                 type="submit"
                 disabled={uploading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2"
-                whileHover={{ scale: uploading ? 1 : 1.02 }}
-                whileTap={{ scale: uploading ? 1 : 0.98 }}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white py-4 px-6 rounded-2xl font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center space-x-2 mt-2"
+                whileHover={{ scale: uploading ? 1 : 1.01 }}
+                whileTap={{ scale: uploading ? 1 : 0.99 }}
             >
                 {uploading ? (
                     <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        <span>Uploading...</span>
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                        <span>Synthesizing...</span>
                     </>
                 ) : (
                     <>
-                        <PhotoIcon className="w-5 h-5" />
-                        <span>Share Hand Picture</span>
+                        <CloudArrowUpIcon className="w-5 h-5" />
+                        <span>Execute Upload</span>
                     </>
                 )}
             </motion.button>

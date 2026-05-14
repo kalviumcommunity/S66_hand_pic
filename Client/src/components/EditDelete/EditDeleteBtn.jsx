@@ -1,37 +1,47 @@
 import { useNavigate } from 'react-router-dom';
+import api from '../../utils/api';
+import toast from 'react-hot-toast';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-const EditDeleteBtn = ({ postId, refreshPosts }) => {
+const EditDeleteBtn = ({ postId, onDeleteSuccess }) => {
     const navigate = useNavigate();
 
-    const handleEdit = () => {
+    const handleEdit = (e) => {
+        e.stopPropagation(); // Stop event propagation in case parent has click handlers
         navigate(`/edit/${postId}`);
     };
 
-    const handleDelete = async () => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-        if (confirmDelete) {
+    const handleDelete = async (e) => {
+        e.stopPropagation();
+        if (window.confirm("Are you sure you want to delete this post?")) {
             try {
-                await fetch(`https://s66-hand-pic.onrender.com/posts/${postId}`, { method: 'DELETE' });
-                refreshPosts();
+                const response = await api.delete(`/posts/${postId}`);
+                toast.success(response.data.message || "Post deleted");
+                if (onDeleteSuccess) {
+                    onDeleteSuccess(postId);
+                }
             } catch (err) {
                 console.error("Error deleting post:", err);
+                toast.error(err.response?.data?.message || "Failed to delete post");
             }
         }
     };
 
     return (
-        <div className="absolute bottom-4 right-4 flex gap-2">
+        <div className="flex gap-2 z-10">
             <button
                 onClick={handleEdit}
-                className="px-3 py-1 bg-blue-500 text-white text-xs font-medium rounded hover:bg-blue-600 transition"
+                className="p-2 bg-indigo-600/90 text-white rounded-full hover:bg-indigo-700 transition-colors backdrop-blur-sm shadow-sm"
+                title="Edit Post"
             >
-                Edit
+                <PencilSquareIcon className="w-4.5 h-4.5" />
             </button>
             <button
                 onClick={handleDelete}
-                className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 transition"
+                className="p-2 bg-red-600/90 text-white rounded-full hover:bg-red-700 transition-colors backdrop-blur-sm shadow-sm"
+                title="Delete Post"
             >
-                Delete
+                <TrashIcon className="w-4.5 h-4.5" />
             </button>
         </div>
     );
