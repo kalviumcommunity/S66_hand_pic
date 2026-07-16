@@ -134,46 +134,46 @@ export default function Home() {
                         className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
                         variants={itemVariants}
                     >
-                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between h-28 shadow-sm">
+                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between min-h-[7rem] h-auto shadow-sm">
                             <div className="flex items-center justify-between text-slate-400">
                                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Enthusiasts</span>
                                 <UserGroupIcon className="w-4 h-4 text-slate-500" />
                             </div>
-                            <div>
-                                <div className="text-2xl font-black text-slate-950 leading-none">{stats.totalUsers?.toLocaleString() || 0}</div>
+                            <div className="mt-4">
+                                <div className="text-2xl font-black text-slate-955 leading-none">{stats.totalUsers?.toLocaleString() || 0}</div>
                                 <p className="text-[10px] text-slate-400 mt-1">Platform members</p>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between h-28 shadow-sm">
+                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between min-h-[7rem] h-auto shadow-sm">
                             <div className="flex items-center justify-between text-slate-400">
                                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Creations</span>
                                 <PhotoIcon className="w-4 h-4 text-slate-500" />
                             </div>
-                            <div>
-                                <div className="text-2xl font-black text-slate-950 leading-none">{stats.photosShared?.toLocaleString() || 0}</div>
+                            <div className="mt-4">
+                                <div className="text-2xl font-black text-slate-955 leading-none">{stats.photosShared?.toLocaleString() || 0}</div>
                                 <p className="text-[10px] text-slate-400 mt-1">Shared perspectives</p>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between h-28 shadow-sm">
+                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between min-h-[7rem] h-auto shadow-sm">
                             <div className="flex items-center justify-between text-slate-400">
                                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Appreciation</span>
                                 <HeartIcon className="w-4 h-4 text-slate-500" />
                             </div>
-                            <div>
-                                <div className="text-2xl font-black text-slate-950 leading-none">{stats.totalLikes?.toLocaleString() || 0}</div>
+                            <div className="mt-4">
+                                <div className="text-2xl font-black text-slate-955 leading-none">{stats.totalLikes?.toLocaleString() || 0}</div>
                                 <p className="text-[10px] text-slate-400 mt-1">Total expressions</p>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between h-28 shadow-sm">
+                        <div className="bg-white rounded-md p-5 border border-slate-200 text-left flex flex-col justify-between min-h-[7rem] h-auto shadow-sm">
                             <div className="flex items-center justify-between text-slate-400">
                                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Growth</span>
                                 <ArrowUpIcon className="w-4 h-4 text-slate-500" />
                             </div>
-                            <div>
-                                <div className="text-2xl font-black text-slate-950 leading-none">+{stats.growthRate || 0}%</div>
+                            <div className="mt-4">
+                                <div className="text-2xl font-black text-slate-955 leading-none">+{stats.growthRate || 0}%</div>
                                 <p className="text-[10px] text-slate-400 mt-1">Weekly increase</p>
                             </div>
                         </div>

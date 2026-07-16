@@ -82,7 +82,7 @@ const SignUp = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row h-screen overflow-hidden bg-white relative">
+        <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen lg:overflow-hidden bg-white relative">
             
             {/* Absolute Home escape control */}
             <Link to="/" className="absolute top-4 left-4 z-50 flex items-center justify-center w-8 h-8 bg-white shadow-sm rounded-md hover:bg-slate-50 transition-all border border-slate-200">
@@ -90,7 +90,7 @@ const SignUp = () => {
             </Link>
 
             {/* LEFT PANEL: Decorative Ambient Side */}
-            <div className="hidden lg:flex flex-1 relative bg-slate-950 overflow-hidden flex-col px-16 py-10 justify-center text-slate-100">
+            <div className="hidden lg:flex flex-1 relative bg-slate-955 overflow-hidden flex-col px-16 py-10 justify-center text-slate-100">
                     <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-slate-800/10 rounded-full blur-[120px] -translate-x-1/4 -translate-y-1/4"></div>
 
                     <motion.div 
@@ -142,7 +142,7 @@ const SignUp = () => {
                 </div>
 
                 {/* RIGHT PANEL: SIGNUP FORM */}
-                <div className="flex-1 flex items-center justify-center px-6 sm:px-12 bg-white overflow-y-auto h-full">
+                <div className="flex-1 flex flex-col justify-center items-center px-6 sm:px-12 bg-white min-h-screen lg:h-full lg:overflow-y-auto">
                     <motion.div 
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}

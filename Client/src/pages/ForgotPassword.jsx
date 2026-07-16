@@ -63,7 +63,7 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row h-screen overflow-hidden bg-white relative">
+        <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen lg:overflow-hidden bg-white relative">
             
             {/* Back button */}
             <Link to="/login" className="absolute top-4 left-4 z-50 flex items-center justify-center w-8 h-8 bg-white shadow-sm rounded-md hover:bg-slate-50 transition-all border border-slate-200">
@@ -71,7 +71,7 @@ const ForgotPassword = () => {
             </Link>
             
             {/* LEFT PANEL */}
-            <div className="hidden lg:flex flex-1 relative bg-slate-950 overflow-hidden flex-col px-16 py-10 justify-center text-slate-100">
+            <div className="hidden lg:flex flex-1 relative bg-slate-955 overflow-hidden flex-col px-16 py-10 justify-center text-slate-100">
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-slate-800/10 rounded-full blur-[120px] -translate-x-1/4 -translate-y-1/4"></div>
 
                 <div className="relative z-10 max-w-xl">
@@ -89,9 +89,9 @@ const ForgotPassword = () => {
 
                     {/* Progress steps indicator */}
                     <div className="flex items-center space-x-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step >= 1 ? 'bg-white text-slate-950' : 'bg-slate-800 text-slate-400'}`}>1</div>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step >= 1 ? 'bg-white text-slate-955' : 'bg-slate-800 text-slate-400'}`}>1</div>
                         <div className={`flex-1 h-0.5 ${step >= 2 ? 'bg-white' : 'bg-slate-800'}`}></div>
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step >= 2 ? 'bg-white text-slate-950' : 'bg-slate-800 text-slate-400'}`}>2</div>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step >= 2 ? 'bg-white text-slate-955' : 'bg-slate-800 text-slate-400'}`}>2</div>
                     </div>
                     <div className="flex justify-between mt-1.5">
                         <span className="text-slate-500 text-[11px] font-semibold">Enter email</span>
@@ -101,7 +101,7 @@ const ForgotPassword = () => {
             </div>
 
             {/* RIGHT PANEL */}
-            <div className="flex-1 flex items-center justify-center px-6 sm:px-12 bg-white h-full overflow-y-auto">
+            <div className="flex-1 flex flex-col justify-center items-center px-6 sm:px-12 bg-white min-h-screen lg:h-full lg:overflow-y-auto">
                 <div className="w-full max-w-[360px] py-6">
                     
                     <div className="mb-6 flex items-start">
