@@ -16,7 +16,7 @@ import api from '../utils/api';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
-    const { user, checkAuthStatus } = useAuth();
+    const { user, checkAuthStatus, logout } = useAuth();
     const { userId } = useParams();
     const location = useLocation();
     
@@ -149,6 +149,47 @@ const Profile = () => {
         const profileLink = `${window.location.origin}/profile/${profileUser._id || profileUser.id}`;
         navigator.clipboard.writeText(profileLink);
         toast.success("Profile link copied to clipboard!");
+    };
+
+    const handleDeleteAccount = async () => {
+        const confirmDelete = await new Promise((resolve) => {
+            toast((t) => (
+                <div className="flex flex-col space-y-2">
+                    <p className="text-xs font-semibold text-slate-900">Are you absolutely sure you want to delete your account?</p>
+                    <div className="flex justify-end space-x-2">
+                        <button
+                            onClick={() => {
+                                toast.dismiss(t.id);
+                                resolve(false);
+                            }}
+                            className="px-2.5 py-1 text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded cursor-pointer"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => {
+                                toast.dismiss(t.id);
+                                resolve(true);
+                            }}
+                            className="px-2.5 py-1 text-[11px] font-semibold bg-red-650 hover:bg-red-700 text-white rounded cursor-pointer"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            ), { duration: 8000 });
+        });
+
+        if (!confirmDelete) return;
+
+        try {
+            await api.delete(`/users/${user.id}`);
+            toast.success("Account deleted successfully.");
+            await logout();
+        } catch (err) {
+            console.error("Error deleting account:", err);
+            toast.error(err.response?.data?.error || "Failed to delete account");
+        }
     };
 
     const handlePostUploadSuccess = () => {
@@ -436,6 +477,19 @@ const Profile = () => {
                                     </form>
                                 )}
                             </div>
+
+                            {isOwnProfile && (
+                                <div className="bg-red-50/30 rounded-md p-6 border border-red-200 shadow-sm">
+                                    <h2 className="text-sm font-bold text-red-650 mb-0.5">Danger Zone</h2>
+                                    <p className="text-slate-500 text-[10px] mb-4">Once you delete your account, there is no going back. All your uploads will be permanently removed.</p>
+                                    <button
+                                        onClick={handleDeleteAccount}
+                                        className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition-all text-xs cursor-pointer text-center"
+                                    >
+                                        Delete Account
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Right Column: Creations */}
