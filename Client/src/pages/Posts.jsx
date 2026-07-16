@@ -268,7 +268,7 @@ const PostList = () => {
                         </div>
                     ) : filteredPosts.length > 0 ? (
                         <motion.div
-                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                            className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"
                             variants={containerVariants}
                             initial="hidden"
                             animate="visible"
@@ -443,7 +443,7 @@ const PostList = () => {
                             onClick={() => setViewingPost(null)}
                         >
                             <motion.div
-                                className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden border border-slate-200 shadow-xl flex flex-col md:flex-row relative"
+                                className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto md:overflow-hidden border border-slate-200 shadow-xl flex flex-col md:flex-row relative"
                                 initial={{ scale: 0.98, opacity: 0, y: 8 }}
                                 animate={{ scale: 1, opacity: 1, y: 0 }}
                                 exit={{ scale: 0.98, opacity: 0, y: 8 }}
@@ -467,7 +467,7 @@ const PostList = () => {
                                 </div>
 
                                 {/* Content Info Side */}
-                                <div className="w-full md:w-[350px] bg-white flex flex-col border-l border-slate-200 h-full overflow-y-auto max-h-[45vh] md:max-h-[75vh]">
+                                <div className="w-full md:w-[350px] bg-white flex flex-col border-t md:border-t-0 md:border-l border-slate-200 md:h-full md:overflow-y-auto">
                                     <div className="p-6 flex-grow">
                                         <div className="flex items-center space-x-2.5 mb-5 pb-4 border-b border-slate-100">
                                             <Link
