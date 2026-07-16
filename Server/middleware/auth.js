@@ -1,27 +1,31 @@
 const jwt = require('jsonwebtoken');
 
-const authenticate = async (req, res, next) => {
-    // Try to get token from cookies first, then from Authorization header
+const authenticate = (req, res, next) => {
+    // Source token from httpOnly cookie only (CRIT-04 fix)
+    // Authorization header kept as fallback for backward compatibility during migration
     let token = req.cookies.token;
 
     if (!token) {
         const authHeader = req.headers.authorization;
         if (authHeader && authHeader.startsWith('Bearer ')) {
-            token = authHeader.substring(7); // Remove 'Bearer ' prefix
+            token = authHeader.substring(7);
         }
     }
 
     if (!token) {
-        return res.status(401).json({ message: "Unauthorized: No token provided" });
+        return res.status(401).json({ error: 'Unauthorized: Authentication required.' });
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        req.user = decoded; // Attach decoded user info to request
+        const decoded = jwt.verify(token, process.env.SECRET_KEY, { algorithms: ['HS256'] });
+        req.user = { id: decoded.id, email: decoded.email };
         next();
     } catch (err) {
-        return res.status(401).json({ message: "Unauthorized: Invalid token" });
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Session expired. Please log in again.' });
+        }
+        return res.status(401).json({ error: 'Unauthorized: Invalid token.' });
     }
 };
 
-module.exports = authenticate ;
+module.exports = authenticate;

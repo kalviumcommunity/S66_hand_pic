@@ -1,46 +1,54 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "tailwindcss";
 
+@theme {
+    --font-sans: -apple-system, "system-ui", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
 
 @layer base {
     html {
-        font-family: 'Poppins', sans-serif;
+        font-family: var(--font-sans);
         -webkit-font-smoothing: antialiased;
     }
 
     body {
-        background-color: #f8fafc;
-        color: #0f172a;
+        background-color: #ffffff;
+        color: #09090b;
         overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 800;
+        letter-spacing: -0.025em;
     }
 
     * {
         scrollbar-width: thin;
-        scrollbar-color: #cbd5e1 #f1f5f9;
+        scrollbar-color: #e4e4e7 #fafafa;
     }
 
     *::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
+        height: 6px;
     }
 
     *::-webkit-scrollbar-track {
-        background: #f1f5f9;
+        background: #fafafa;
     }
 
     *::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
+        background: #e4e4e7;
+        border-radius: 3px;
     }
 
     *::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+        background: #d4d4d8;
     }
 }
 
 @layer utilities {
     .bg-dots {
-        background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+        background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
         background-size: 24px 24px;
     }
 }
@@ -53,3 +61,4 @@
         overflow: hidden;
     }
 }
+

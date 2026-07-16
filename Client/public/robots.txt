@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /posts
+Disallow: /profile
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /edit
+
+Sitemap: https://handscape-o.netlify.app/sitemap.xml

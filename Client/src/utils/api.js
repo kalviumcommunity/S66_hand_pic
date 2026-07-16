@@ -4,16 +4,12 @@ import { API_CONFIG } from '../config/environment';
 // Create axios instance with environment-based config
 const api = axios.create({
     baseURL: API_CONFIG.BASE_URL,
-    withCredentials: API_CONFIG.COOKIE_CONFIG.withCredentials,
+    withCredentials: true, // Securely send httpOnly cookies on every request
 });
 
-// Add request interceptor to include auth token
+// Add request interceptor (in case Authorization header is ever needed in future, but not storing in localStorage anymore)
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
         return config;
     },
     (error) => {
@@ -26,10 +22,7 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Clear invalid token
-            localStorage.removeItem('authToken');
-            // Optionally redirect to login
-            // window.location.href = '/login';
+            // No local storage to clean up now as we rely entirely on httpOnly cookie auth state
         }
         return Promise.reject(error);
     }

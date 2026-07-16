@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { API_CONFIG } from '../config/environment';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -16,114 +15,83 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [token, setToken] = useState(localStorage.getItem('authToken'));
 
-    // Check if user is authenticated on app load
-    useEffect(() => {
-        checkAuthStatus();
-    }, []);
-
-    const checkAuthStatus = async () => {
+    // CRIT-04 fix: No localStorage. Auth state derived entirely from httpOnly cookie via /auth/verify.
+    // LOW-06: memoized with useCallback so ProtectedRoute doesn't re-create it on every render.
+    const checkAuthStatus = useCallback(async () => {
         try {
-            const headers = {};
-            if (token) {
-                headers.Authorization = `Bearer ${token}`;
-            }
-
-            const response = await axios.get(`${API_CONFIG.BASE_URL}/auth/verify`, {
-                withCredentials: API_CONFIG.COOKIE_CONFIG.withCredentials,
-                headers
-            });
+            const response = await api.get('/auth/verify');
             if (response.data.user) {
                 setUser(response.data.user);
                 setIsAuthenticated(true);
             }
-        } catch (error) {
+        } catch {
             setUser(null);
             setIsAuthenticated(false);
-            // Clear invalid token
-            localStorage.removeItem('authToken');
-            setToken(null);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        checkAuthStatus();
+    }, [checkAuthStatus]);
 
     const login = async (email, password) => {
         try {
-            const response = await axios.post(`${API_CONFIG.BASE_URL}/login`, {
-                email,
-                password
-            }, { withCredentials: API_CONFIG.COOKIE_CONFIG.withCredentials });
-
+            const response = await api.post('/login', { email, password });
             if (response.data.user) {
                 setUser(response.data.user);
                 setIsAuthenticated(true);
-
-                // Store token if provided
-                if (response.data.token) {
-                    localStorage.setItem('authToken', response.data.token);
-                    setToken(response.data.token);
-                }
-
                 return { success: true, message: response.data.message };
             }
+            return { success: false, message: 'Login failed' };
         } catch (error) {
             return {
                 success: false,
-                message: error.response?.data?.message || 'Login failed'
+                message: error.response?.data?.error || 'Login failed. Please try again.'
             };
         }
     };
 
     const signup = async (userData) => {
         try {
-            const response = await axios.post(`${API_CONFIG.BASE_URL}/signup`, userData);
+            const response = await api.post('/signup', userData);
             return { success: true, message: response.data.message };
         } catch (error) {
-            return { 
-                success: false, 
-                message: error.response?.data?.error || 'Signup failed' 
+            return {
+                success: false,
+                message: error.response?.data?.error || 'Signup failed. Please try again.'
             };
         }
     };
 
-    const googleAuth = async (email, name, picture) => {
+    // CRIT-04 + HIGH-10 fix: sends Google credential (ID token) for server-side verification
+    const googleAuth = async (credential) => {
         try {
-            const response = await axios.post(`${API_CONFIG.BASE_URL}/auth/google`, { email, name, profilePicture: picture });
-            const { token, user } = response.data;
-            
-            localStorage.setItem('authToken', token);
-            setToken(token);
+            const response = await api.post('/auth/google', { credential });
+            const { user } = response.data;
+            // Cookie is set by server — no token stored locally
             setUser(user);
             setIsAuthenticated(true);
-            
             return { success: true, message: response.data.message, isNewUser: response.data.isNewUser };
         } catch (error) {
-            return { 
-                success: false, 
-                message: error.response?.data?.error || 'Google auth failed' 
+            return {
+                success: false,
+                message: error.response?.data?.error || 'Google authentication failed.'
             };
         }
     };
 
     const logout = async () => {
         try {
-            const headers = {};
-            if (token) {
-                headers.Authorization = `Bearer ${token}`;
-            }
-            await axios.post(`${API_CONFIG.BASE_URL}/logout`, {}, {
-                withCredentials: API_CONFIG.COOKIE_CONFIG.withCredentials,
-                headers
-            });
+            await api.post('/logout');
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
             setUser(null);
             setIsAuthenticated(false);
-            localStorage.removeItem('authToken');
-            setToken(null);
+            // No localStorage to clear
         }
     };
 
