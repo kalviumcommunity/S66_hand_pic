@@ -488,6 +488,10 @@ userRouter.delete('/users/:id', authenticate, async (req, res, next) => {
         if (req.user.id !== req.params.id) {
             return res.status(403).json({ error: 'Forbidden: You can only delete your own account.' });
         }
+        
+        // Delete all posts created by this user
+        await PostModel.deleteMany({ created_by: req.params.id });
+
         const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
         if (!deletedUser) return res.status(404).json({ error: 'User not found' });
         res.clearCookie('token', {

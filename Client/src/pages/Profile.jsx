@@ -26,6 +26,7 @@ const Profile = () => {
     const [likedPosts, setLikedPosts] = useState([]);
     const [activeTab, setActiveTab] = useState('posts');
     const [showAddPost, setShowAddPost] = useState(false);
+    const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
     const [showEditProfile, setShowEditProfile] = useState(location.state?.showEditModal || false);
     const [editData, setEditData] = useState({
         username: '',
@@ -152,36 +153,6 @@ const Profile = () => {
     };
 
     const handleDeleteAccount = async () => {
-        const confirmDelete = await new Promise((resolve) => {
-            toast((t) => (
-                <div className="flex flex-col space-y-2">
-                    <p className="text-xs font-semibold text-slate-900">Are you absolutely sure you want to delete your account?</p>
-                    <div className="flex justify-end space-x-2">
-                        <button
-                            onClick={() => {
-                                toast.dismiss(t.id);
-                                resolve(false);
-                            }}
-                            className="px-2.5 py-1 text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded cursor-pointer"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={() => {
-                                toast.dismiss(t.id);
-                                resolve(true);
-                            }}
-                            className="px-2.5 py-1 text-[11px] font-semibold bg-red-650 hover:bg-red-700 text-white rounded cursor-pointer"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            ), { duration: 8000 });
-        });
-
-        if (!confirmDelete) return;
-
         try {
             await api.delete(`/users/${user.id}`);
             toast.success("Account deleted successfully.");
@@ -189,6 +160,8 @@ const Profile = () => {
         } catch (err) {
             console.error("Error deleting account:", err);
             toast.error(err.response?.data?.error || "Failed to delete account");
+        } finally {
+            setShowDeleteAccountModal(false);
         }
     };
 
@@ -483,7 +456,7 @@ const Profile = () => {
                                     <h2 className="text-sm font-bold text-red-650 mb-0.5">Danger Zone</h2>
                                     <p className="text-slate-500 text-[10px] mb-4">Once you delete your account, there is no going back. All your uploads will be permanently removed.</p>
                                     <button
-                                        onClick={handleDeleteAccount}
+                                        onClick={() => setShowDeleteAccountModal(true)}
                                         className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition-all text-xs cursor-pointer text-center"
                                     >
                                         Delete Account
@@ -563,6 +536,42 @@ const Profile = () => {
                             </div>
                             <div className="p-5">
                                 <AddPost onSuccess={handlePostUploadSuccess} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Delete Account Modal Overlay */}
+                {showDeleteAccountModal && (
+                    <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+                        <div className="bg-white rounded-md max-w-md w-full shadow-xl border border-slate-200 animate-fade-up relative overflow-hidden">
+                            <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-red-50/20">
+                                <h2 className="text-sm font-bold text-red-650">Delete Account</h2>
+                                <button
+                                    onClick={() => setShowDeleteAccountModal(false)}
+                                    className="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-md flex items-center justify-center hover:text-slate-800 transition-colors cursor-pointer"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            <div className="p-5">
+                                <p className="text-xs text-slate-500 leading-relaxed mb-6 font-medium">
+                                    Are you absolutely sure you want to delete your account? <strong>This action cannot be undone.</strong> All your uploaded hand snapshots and details will be permanently removed from Handscape.
+                                </p>
+                                <div className="flex justify-end space-x-2.5">
+                                    <button
+                                        onClick={() => setShowDeleteAccountModal(false)}
+                                        className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md text-xs font-semibold transition-colors cursor-pointer"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleDeleteAccount}
+                                        className="px-3.5 py-2 bg-red-600 hover:bg-red-750 text-white rounded-md text-xs font-semibold transition-colors cursor-pointer"
+                                    >
+                                        Delete Permanently
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
