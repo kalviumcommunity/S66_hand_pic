@@ -3,6 +3,10 @@
 
 @theme {
     --font-sans: -apple-system, "system-ui", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --color-slate-955: #020617;
+    --color-slate-850: #1e293b;
+    --color-slate-855: #1e293b;
+    --color-slate-355: #cbd5e1;
 }
 
 @layer base {

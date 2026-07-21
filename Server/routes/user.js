@@ -442,6 +442,12 @@ userRouter.put('/users/:id', authenticate, upload.single('profilePicture'), [
                 return res.status(409).json({ error: 'This username is already taken.' });
             }
             allowedUpdate.username = req.body.username;
+
+            // Update username on all posts created by this user
+            await PostModel.updateMany(
+                { created_by: req.params.id },
+                { username: req.body.username }
+            );
         }
 
         if (req.body.age !== undefined) {
