@@ -375,12 +375,12 @@ const PostList = () => {
                             </div>
                             <h3 className="text-base font-bold text-slate-900 mb-1">No artifacts spotted</h3>
                             <p className="text-slate-400 text-xs mb-6 max-w-xs mx-auto font-medium">
-                                {searchTerm || selectedUser
+                                {searchTerm
                                     ? "No matches were found. Try updating search queries."
                                     : "Be the first platform member to publish an artifact!"
                                 }
                             </p>
-                            {isAuthenticated && !searchTerm && !selectedUser && (
+                            {isAuthenticated && !searchTerm && (
                                 <button
                                     onClick={() => setShowAddPost(true)}
                                     className="bg-slate-950 hover:bg-slate-900 text-white px-5 py-2.5 rounded-md font-semibold text-xs transition-all cursor-pointer"
