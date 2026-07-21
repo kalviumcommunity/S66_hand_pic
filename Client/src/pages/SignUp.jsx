@@ -53,7 +53,7 @@ const SignUp = () => {
             } else {
                 toast.error(result.message);
             }
-        } catch (error) {
+        } catch {
             toast.error("Something went wrong");
         } finally {
             setLoading(false);

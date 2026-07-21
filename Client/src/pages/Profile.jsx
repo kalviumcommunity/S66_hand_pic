@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
@@ -18,16 +18,12 @@ import toast from 'react-hot-toast';
 const Profile = () => {
     const { user, checkAuthStatus, logout } = useAuth();
     const { userId } = useParams();
-    const location = useLocation();
     
     const [profileUser, setProfileUser] = useState(null);
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [userPosts, setUserPosts] = useState([]);
-    const [likedPosts, setLikedPosts] = useState([]);
-    const [activeTab, setActiveTab] = useState('posts');
     const [showAddPost, setShowAddPost] = useState(false);
     const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
-    const [showEditProfile, setShowEditProfile] = useState(location.state?.showEditModal || false);
     const [editData, setEditData] = useState({
         username: '',
         age: '',
@@ -59,7 +55,6 @@ const Profile = () => {
                     });
                     setLoadingProfile(false);
                     fetchUserPosts(user.id);
-                    fetchLikedPosts();
                 }
             } else {
                 try {
@@ -98,14 +93,6 @@ const Profile = () => {
         }
     };
 
-    const fetchLikedPosts = async () => {
-        try {
-            const response = await api.get('/user/liked-posts');
-            setLikedPosts(response.data);
-        } catch (error) {
-            console.error('Error fetching liked posts:', error);
-        }
-    };
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
